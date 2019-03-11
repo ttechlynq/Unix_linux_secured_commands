@@ -1,0 +1,46 @@
+#!/bin/sh
+
+############################################################
+#This script provides a safe method of using some sensitive#
+#Unix/Linux commands. It does this by restricting regular  #
+#users from issuing such commands; which include the "ps", #
+#"df" and "uptime" commands. If someone other root issues  #
+#any of these commands, they are not allowed to execute    #
+# and are notified of that. This script can be easily      #
+#improved to include other commands commands as well.          #
+#                                                          #
+#Author: Chuck Ezekiel                                     #
+############################################################
+
+
+     echo -n "Type command to use: "
+     read command_to_use
+if   [ $command_to_use = "ps" -o $command_to_use = "df" -o $command_to_use = "uptime" ]; then
+     echo "WARNING! You typed in $command_to_use" #Display the command typed by user
+     echo "Checking if you are allowed to use this command. Please wait..."
+if   ! [ $(id -u) = 0 ]; then   #This verifies that this user is a root user. 
+     echo "This command can only be ran by root. Your ID has no permission to do this" #If not root user, then notify the user
+     exit 1 #Failure error
+else 
+   if [ $command_to_use = "ps" ]; then
+      
+      $command_to_use >> /home/chuck/bigDirectory/psOutput.txt  #If command is ps, keep appending output to specified file
+      echo "The $command_to_use command has been executed. You can check the specified directory for the output"
+    exit 0 #Success code
+  fi
+  if [ $command_to_use = "df" ]; then
+     $command_to_use >>/home/chuck/bigDirectory/dfOutput.txt #If command is df, keep appending output to specified file
+     echo "The $command_to_use command has been executed. Check the specified directory for the output."
+     exit 0 #Success code
+  fi
+  if [ $command_to_use = "uptime" ]; then
+     $command_to_use >>/home/chuck/bigDirectory/uptimeOutput.txt #Or if command is uptime, keep appending output to this file
+     echo "The $command_to_use command has been executed. Check the specified directory for the output."
+     exit 0 #success code
+  fi
+fi
+exit 0 # Success code
+fi
+
+
+
